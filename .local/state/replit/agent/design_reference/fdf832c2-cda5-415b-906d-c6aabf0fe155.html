@@ -1,0 +1,590 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Bot Manager - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                borderRadius: {
+                    lg: "var(--radius)",
+                    md: "calc(var(--radius) - 2px)",
+                    sm: "calc(var(--radius) - 4px)",
+                },
+                colors: {
+                    background: "var(--background)",
+                    foreground: "var(--foreground)",
+                    card: {
+                        DEFAULT: "var(--card)",
+                        foreground: "var(--card-foreground)",
+                    },
+                    popover: {
+                        DEFAULT: "var(--popover)",
+                        foreground: "var(--popover-foreground)",
+                    },
+                    primary: {
+                        DEFAULT: "var(--primary)",
+                        foreground: "var(--primary-foreground)",
+                    },
+                    secondary: {
+                        DEFAULT: "var(--secondary)",
+                        foreground: "var(--secondary-foreground)",
+                    },
+                    muted: {
+                        DEFAULT: "var(--muted)",
+                        foreground: "var(--muted-foreground)",
+                    },
+                    accent: {
+                        DEFAULT: "var(--accent)",
+                        foreground: "var(--accent-foreground)",
+                    },
+                    destructive: {
+                        DEFAULT: "var(--destructive)",
+                        foreground: "var(--destructive-foreground)",
+                    },
+                    border: "var(--border)",
+                    input: "var(--input)",
+                    ring: "var(--ring)",
+                    chart: {
+                        "1": "var(--chart-1)",
+                        "2": "var(--chart-2)",
+                        "3": "var(--chart-3)",
+                        "4": "var(--chart-4)",
+                        "5": "var(--chart-5)",
+                    }
+                },
+                fontFamily: {
+                    sans: ["var(--font-sans)"],
+                }
+            },
+        }
+    };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --radius: 0.5rem;
+            --background: hsl(0 0% 100%);
+            --foreground: hsl(222.2 84% 4.9%);
+            --card: hsl(0 0% 100%);
+            --card-foreground: hsl(222.2 84% 4.9%);
+            --popover: hsl(0 0% 100%);
+            --popover-foreground: hsl(222.2 84% 4.9%);
+            --primary: hsl(221.2 83.2% 53.3%);
+            --primary-foreground: hsl(210 40% 98%);
+            --secondary: hsl(210 40% 96%);
+            --secondary-foreground: hsl(222.2 84% 4.9%);
+            --muted: hsl(210 40% 96%);
+            --muted-foreground: hsl(215.4 16.3% 46.9%);
+            --accent: hsl(210 40% 96%);
+            --accent-foreground: hsl(222.2 84% 4.9%);
+            --destructive: hsl(0 84.2% 60.2%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(214.3 31.8% 91.4%);
+            --input: hsl(214.3 31.8% 91.4%);
+            --ring: hsl(221.2 83.2% 53.3%);
+            --chart-1: hsl(12 76% 61%);
+            --chart-2: hsl(173 58% 39%);
+            --chart-3: hsl(197 37% 24%);
+            --chart-4: hsl(43 74% 66%);
+            --chart-5: hsl(27 87% 67%);
+            --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+        }
+        
+        .dark {
+            --background: hsl(222.2 84% 4.9%);
+            --foreground: hsl(210 40% 98%);
+            --card: hsl(222.2 84% 4.9%);
+            --card-foreground: hsl(210 40% 98%);
+            --popover: hsl(222.2 84% 4.9%);
+            --popover-foreground: hsl(210 40% 98%);
+            --primary: hsl(217.2 91.2% 59.8%);
+            --primary-foreground: hsl(222.2 84% 4.9%);
+            --secondary: hsl(217.2 32.6% 17.5%);
+            --secondary-foreground: hsl(210 40% 98%);
+            --muted: hsl(217.2 32.6% 17.5%);
+            --muted-foreground: hsl(215 20.2% 65.1%);
+            --accent: hsl(217.2 32.6% 17.5%);
+            --accent-foreground: hsl(210 40% 98%);
+            --destructive: hsl(0 62.8% 30.6%);
+            --destructive-foreground: hsl(210 40% 98%);
+            --border: hsl(217.2 32.6% 17.5%);
+            --input: hsl(217.2 32.6% 17.5%);
+            --ring: hsl(224.3 76.3% 94.1%);
+        }
+        
+        body {
+            font-family: var(--font-sans);
+        }
+        
+        .sidebar-item:hover {
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+        }
+        
+        .sidebar-item.active {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+    </style>
+</head>
+<body class="bg-background text-foreground font-sans">
+    <!-- @COMPONENT: MainLayout [full application layout] -->
+    <div class="flex h-screen bg-background">
+        <!-- @COMPONENT: Sidebar [navigation menu] -->
+        <aside class="w-64 bg-card border-r border-border flex flex-col">
+            <div class="p-6 border-b border-border">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white">
+                        <i class="fab fa-whatsapp text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-semibold text-card-foreground">WhatsApp Bot</h1>
+                        <p class="text-sm text-muted-foreground">Admin Dashboard</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="flex-1 p-4">
+                <ul class="space-y-2">
+                    <li>
+                        <a href="#" class="sidebar-item active flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-event="click:navigateTo" data-implementation="Navigate to dashboard view">
+                            <i class="fas fa-chart-bar w-4 h-4"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-event="click:navigateTo" data-implementation="Navigate to messages view">
+                            <i class="fas fa-comments w-4 h-4"></i>
+                            Messages
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-event="click:navigateTo" data-implementation="Navigate to templates view">
+                            <i class="fas fa-clipboard-list w-4 h-4"></i>
+                            Templates
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-event="click:navigateTo" data-implementation="Navigate to webhook settings">
+                            <i class="fas fa-link w-4 h-4"></i>
+                            Webhooks
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-event="click:navigateTo" data-implementation="Navigate to bot settings">
+                            <i class="fas fa-robot w-4 h-4"></i>
+                            Bot Config
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="sidebar-item flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors" data-event="click:navigateTo" data-implementation="Navigate to analytics">
+                            <i class="fas fa-chart-line w-4 h-4"></i>
+                            Analytics
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <div class="p-4 border-t border-border">
+                <div class="flex items-center gap-3 p-3 rounded-md bg-muted">
+                    <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground text-sm font-medium">
+                        <span data-bind="user.initials">JD</span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium text-card-foreground truncate" data-bind="user.name">John Doe</p>
+                        <p class="text-xs text-muted-foreground truncate" data-bind="user.email">john@company.com</p>
+                    </div>
+                    <button class="text-muted-foreground hover:text-card-foreground" data-event="click:logout" data-implementation="Handle user logout">
+                        <i class="fas fa-sign-out-alt w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </aside>
+        <!-- @END_COMPONENT: Sidebar -->
+
+        <!-- @COMPONENT: MainContent [main application content area] -->
+        <main class="flex-1 flex flex-col overflow-hidden">
+            <!-- @COMPONENT: Header [top navigation bar] -->
+            <header class="bg-card border-b border-border px-6 py-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-2xl font-bold text-card-foreground">Dashboard</h2>
+                        <p class="text-muted-foreground">Monitor your WhatsApp bot performance</p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <!-- @STATE: webhookStatus:string = 'connected' -->
+                        <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-800">
+                            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                            <span class="text-sm font-medium" data-bind="webhook.status">Webhook Connected</span>
+                        </div>
+                        <button class="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors" data-event="click:testBot" data-implementation="Test bot functionality">
+                            <i class="fas fa-play mr-2"></i>
+                            Test Bot
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <!-- @END_COMPONENT: Header -->
+
+            <!-- @COMPONENT: DashboardContent [dashboard statistics and content] -->
+            <div class="flex-1 overflow-auto p-6">
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- @MAP: statsCards.map(card => ( -->
+                    <div class="bg-card p-6 rounded-lg border border-border shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">Messages Today</p>
+                                <p class="text-2xl font-bold text-card-foreground" data-bind="stats.messagesToday">1,234</p>
+                                <p class="text-xs text-green-600 mt-1">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    <span data-bind="stats.messagesTodayChange">+12%</span> from yesterday
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-envelope text-blue-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border border-border shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">Active Users</p>
+                                <p class="text-2xl font-bold text-card-foreground" data-bind="stats.activeUsers">892</p>
+                                <p class="text-xs text-green-600 mt-1">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    <span data-bind="stats.activeUsersChange">+8%</span> from yesterday
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-users text-green-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border border-border shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">Response Rate</p>
+                                <p class="text-2xl font-bold text-card-foreground" data-bind="stats.responseRate">98.5%</p>
+                                <p class="text-xs text-green-600 mt-1">
+                                    <i class="fas fa-arrow-up mr-1"></i>
+                                    <span data-bind="stats.responseRateChange">+2%</span> from yesterday
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-chart-line text-purple-600"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-card p-6 rounded-lg border border-border shadow-sm">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-muted-foreground">Avg Response Time</p>
+                                <p class="text-2xl font-bold text-card-foreground" data-bind="stats.avgResponseTime">0.8s</p>
+                                <p class="text-xs text-red-600 mt-1">
+                                    <i class="fas fa-arrow-down mr-1"></i>
+                                    <span data-bind="stats.avgResponseTimeChange">-0.2s</span> from yesterday
+                                </p>
+                            </div>
+                            <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-clock text-orange-600"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Recent Messages -->
+                    <div class="bg-card rounded-lg border border-border shadow-sm">
+                        <div class="p-6 border-b border-border">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-semibold text-card-foreground">Recent Messages</h3>
+                                <button class="text-primary hover:text-primary/80 text-sm font-medium" data-event="click:viewAllMessages" data-implementation="Navigate to messages page">
+                                    View All
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <!-- @MAP: recentMessages.map(message => ( -->
+                                <div class="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                                    <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <p class="text-sm font-medium text-card-foreground" data-bind="message.sender">+1 (555) 123-4567</p>
+                                            <span class="text-xs text-muted-foreground" data-bind="message.timestamp">2 min ago</span>
+                                        </div>
+                                        <p class="text-sm text-muted-foreground" data-bind="message.content">Hi, I need help with my order #12345</p>
+                                        <div class="flex items-center gap-2 mt-2">
+                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full" data-bind="message.status">Responded</span>
+                                            <span class="text-xs text-muted-foreground" data-bind="message.responseTime">Response: 0.5s</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                                    <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <p class="text-sm font-medium text-card-foreground" data-bind="message.sender">+1 (555) 987-6543</p>
+                                            <span class="text-xs text-muted-foreground" data-bind="message.timestamp">5 min ago</span>
+                                        </div>
+                                        <p class="text-sm text-muted-foreground" data-bind="message.content">/help</p>
+                                        <div class="flex items-center gap-2 mt-2">
+                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full" data-bind="message.status">Responded</span>
+                                            <span class="text-xs text-muted-foreground" data-bind="message.responseTime">Response: 0.3s</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
+                                    <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
+                                        <i class="fas fa-user text-gray-600"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <p class="text-sm font-medium text-card-foreground" data-bind="message.sender">+1 (555) 456-7890</p>
+                                            <span class="text-xs text-muted-foreground" data-bind="message.timestamp">8 min ago</span>
+                                        </div>
+                                        <p class="text-sm text-muted-foreground" data-bind="message.content">What are your business hours?</p>
+                                        <div class="flex items-center gap-2 mt-2">
+                                            <span class="px-2 py-1 bg-amber-100 text-amber-800 text-xs rounded-full" data-bind="message.status">Pending</span>
+                                            <span class="text-xs text-muted-foreground" data-bind="message.responseTime">Awaiting response</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bot Commands Usage -->
+                    <div class="bg-card rounded-lg border border-border shadow-sm">
+                        <div class="p-6 border-b border-border">
+                            <h3 class="text-lg font-semibold text-card-foreground">Popular Commands</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <!-- @MAP: commandStats.map(command => ( -->
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-terminal text-blue-600 text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-card-foreground" data-bind="command.name">/help</p>
+                                            <p class="text-xs text-muted-foreground" data-bind="command.description">Show available commands</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-semibold text-card-foreground" data-bind="command.usage">342</p>
+                                        <p class="text-xs text-muted-foreground">uses today</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-info-circle text-green-600 text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-card-foreground" data-bind="command.name">/info</p>
+                                            <p class="text-xs text-muted-foreground" data-bind="command.description">Company information</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-semibold text-card-foreground" data-bind="command.usage">178</p>
+                                        <p class="text-xs text-muted-foreground">uses today</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-phone text-purple-600 text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-card-foreground" data-bind="command.name">/contact</p>
+                                            <p class="text-xs text-muted-foreground" data-bind="command.description">Contact information</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-semibold text-card-foreground" data-bind="command.usage">156</p>
+                                        <p class="text-xs text-muted-foreground">uses today</p>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
+                                            <i class="fas fa-shopping-cart text-orange-600 text-sm"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-card-foreground" data-bind="command.name">/order</p>
+                                            <p class="text-xs text-muted-foreground" data-bind="command.description">Order status check</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-sm font-semibold text-card-foreground" data-bind="command.usage">89</p>
+                                        <p class="text-xs text-muted-foreground">uses today</p>
+                                    </div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status and Quick Actions -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Webhook Status -->
+                    <div class="bg-card rounded-lg border border-border shadow-sm">
+                        <div class="p-6 border-b border-border">
+                            <h3 class="text-lg font-semibold text-card-foreground">Webhook Status</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-muted-foreground">WhatsApp Cloud API</span>
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Connected</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-muted-foreground">Message Verification</span>
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Valid</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-muted-foreground">Rate Limiting</span>
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Tier 2</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-muted-foreground">Last Health Check</span>
+                                    <span class="text-xs text-muted-foreground" data-bind="webhook.lastCheck">2 min ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Template Management -->
+                    <div class="bg-card rounded-lg border border-border shadow-sm">
+                        <div class="p-6 border-b border-border">
+                            <h3 class="text-lg font-semibold text-card-foreground">Templates</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-muted-foreground">Approved Templates</span>
+                                    <span class="text-sm font-semibold text-card-foreground" data-bind="templates.approved">12</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-muted-foreground">Pending Approval</span>
+                                    <span class="text-sm font-semibold text-card-foreground" data-bind="templates.pending">3</span>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-muted-foreground">Most Used</span>
+                                    <span class="text-sm font-semibold text-card-foreground" data-bind="templates.mostUsed">welcome_msg</span>
+                                </div>
+                                <button class="w-full bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90 transition-colors" data-event="click:createTemplate" data-implementation="Open template creation modal">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Create Template
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="bg-card rounded-lg border border-border shadow-sm">
+                        <div class="p-6 border-b border-border">
+                            <h3 class="text-lg font-semibold text-card-foreground">Quick Actions</h3>
+                        </div>
+                        <div class="p-6">
+                            <div class="space-y-3">
+                                <button class="w-full flex items-center gap-3 p-3 text-left rounded-lg hover:bg-muted transition-colors" data-event="click:broadcastMessage" data-implementation="Open broadcast message modal">
+                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-bullhorn text-blue-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-card-foreground">Broadcast Message</p>
+                                        <p class="text-xs text-muted-foreground">Send to all users</p>
+                                    </div>
+                                </button>
+
+                                <button class="w-full flex items-center gap-3 p-3 text-left rounded-lg hover:bg-muted transition-colors" data-event="click:exportLogs" data-implementation="Export conversation logs">
+                                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-download text-green-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-card-foreground">Export Logs</p>
+                                        <p class="text-xs text-muted-foreground">Download conversation data</p>
+                                    </div>
+                                </button>
+
+                                <button class="w-full flex items-center gap-3 p-3 text-left rounded-lg hover:bg-muted transition-colors" data-event="click:configureBot" data-implementation="Navigate to bot configuration">
+                                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <i class="fas fa-cog text-purple-600 text-sm"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-card-foreground">Bot Settings</p>
+                                        <p class="text-xs text-muted-foreground">Configure responses</p>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- @END_COMPONENT: DashboardContent -->
+        </main>
+        <!-- @END_COMPONENT: MainContent -->
+    </div>
+    <!-- @END_COMPONENT: MainLayout -->
+
+    <script>
+        // TODO: Implement business logic, API calls, and state management
+        (function() {
+            // Simulated real-time updates for demo purposes
+            function updateStats() {
+                // This would typically fetch real data from your API
+                console.log('Updating dashboard statistics...');
+            }
+
+            function initializeEventHandlers() {
+                // Add event listeners for interactive elements
+                document.querySelectorAll('[data-event]').forEach(element => {
+                    const eventData = element.getAttribute('data-event');
+                    const [eventType, handler] = eventData.split(':');
+                    
+                    element.addEventListener(eventType, function(e) {
+                        console.log(`Event triggered: ${handler}`, {
+                            element: this,
+                            implementation: this.getAttribute('data-implementation')
+                        });
+                        // TODO: Implement actual event handlers
+                    });
+                });
+            }
+
+            // Initialize the application
+            document.addEventListener('DOMContentLoaded', function() {
+                initializeEventHandlers();
+                updateStats();
+                
+                // Set up periodic updates
+                setInterval(updateStats, 30000); // Update every 30 seconds
+            });
+        })();
+    </script>
+</body>
+</html>
